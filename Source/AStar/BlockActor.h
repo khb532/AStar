@@ -53,4 +53,7 @@ public:
 	int32 m_y_idx;
 	//	Array Index
 	int32 m_arr_idx;
+
+	//	Parent Idx ( 누구로부터 cost 계산했는지 )
+	int32 m_parent_idx = -1;
 };

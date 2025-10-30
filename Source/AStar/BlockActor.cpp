@@ -52,9 +52,37 @@ void ABlockActor::ChangeColor_Outline(FLinearColor color)
 
 void ABlockActor::SetCost(ABlockActor* start, ABlockActor* goal)
 {
-	
-	
-	
+	//	GCost
+	float tmp_cost = FMath::Abs(start->m_y_idx - this->m_y_idx) + FMath::Abs(start->m_x_idx - this->m_x_idx);
+
+	//	IF Cross , 1.5 cost Add
+	if (tmp_cost == 2)
+		tmp_cost = 1.5f;
+
+	float tmp_gcost = start->m_GCostValue + tmp_cost;
+
+	//	HCost ( 목적지까지 추정치 )
+	float tmp_hcost = FMath::Max(FMath::Abs(goal->m_y_idx - this->m_y_idx), FMath::Abs(goal->m_x_idx - this->m_x_idx));
+
+	//	FCost ( GCost + HCost )
+	float tmp_fcost = tmp_gcost + tmp_hcost;
+
+	//	IF FCostValue == -1
+	//	IF tmp_FCost < FCostValue
+	//	IF tmp_FCost == FCostValue && tmp_GCost > GCostValue
+	//	Apply tmp_Costs
+	if (m_FCostValue == -1 || tmp_fcost < m_FCostValue || (tmp_fcost == m_FCostValue && tmp_gcost > m_GCostValue))
+	{
+		m_GCostValue = tmp_gcost;
+		m_HCostValue = tmp_hcost;
+		m_FCostValue = tmp_fcost;
+
+		GCost->SetText(FText::AsNumber(m_GCostValue));
+		HCost->SetText(FText::AsNumber(m_HCostValue));
+		FCost->SetText(FText::AsNumber(m_FCostValue));
+
+		m_parent_idx = start->m_arr_idx;
+	}	
 }
 
 void ABlockActor::Init(int32 ny, int32 nx)
